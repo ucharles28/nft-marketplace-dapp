@@ -95,9 +95,9 @@ contract NFTMarketplace is ERC721URIStorage, Ownable {
         bool sold
     );
 
-    ///////////////////
+    //////////////////////
     // Modifiers    /////
-    ///////////////////
+    /////////////////////
     modifier moreThanZero(uint256 amount) {
         if (amount == 0) {
             revert NFTMarketplace__MoreThanZero();
@@ -116,6 +116,14 @@ contract NFTMarketplace is ERC721URIStorage, Ownable {
         i_owner = payable(msg.sender);
     }
 
+    /////////////////////////////
+    /////// Functions    ////////
+    ////////////////////////////
+
+    ///////////////////
+    // Public Functions
+    ///////////////////
+
     /**
      * @notice This updates the listing fee. This fee will be taken from the seller and transferred to the contract owner upon completion of any sale
      * @param _listingPrice The new listing fee
@@ -124,14 +132,6 @@ contract NFTMarketplace is ERC721URIStorage, Ownable {
         uint256 _listingPrice
     ) public payable onlyOwner moreThanZero(_listingPrice) {
         listingPrice = _listingPrice;
-    }
-
-    /**
-     * @notice Gets the listing price
-     * @return The current listing price
-     */
-    function getListingPrice() public view returns (uint256) {
-        return listingPrice;
     }
 
     /**
@@ -155,34 +155,6 @@ contract NFTMarketplace is ERC721URIStorage, Ownable {
         _setTokenURI(newTokenId, tokenURI);
         createMarketItem(newTokenId, price);
         return newTokenId;
-    }
-
-    /**
-     * Creates a Market item for the newly minted NFT
-     * @param tokenId The token id
-     * @param price The token price
-     */
-    function createMarketItem(
-        uint256 tokenId,
-        uint256 price
-    ) private moreThanZero(price) mustBeEqualToListingPrice(price) {
-        s_idToMarketItem[tokenId] = MarketItem(
-            tokenId,
-            payable(msg.sender),
-            payable(address(this)),
-            price,
-            false
-        );
-
-        emit MarketItemCreated(
-            tokenId,
-            msg.sender,
-            address(this),
-            price,
-            false
-        );
-
-        _transfer(msg.sender, address(this), tokenId);
     }
 
     /**
@@ -233,30 +205,58 @@ contract NFTMarketplace is ERC721URIStorage, Ownable {
         s_idToMarketItem[tokenId].seller = payable(address(0));
         s_itemsSold += 1;
 
-        emit MarketItemSold(
-            tokenId,
-            msg.sender,
-            price,
-            false
-        );
-
+        emit MarketItemSold(tokenId, msg.sender, price, false);
 
         _transfer(address(this), msg.sender, tokenId);
         bool success = false;
-        (success,) = i_owner.call{value: listingPrice}("");
+        (success, ) = i_owner.call{value: listingPrice}("");
         if (!success) {
             revert NFTMarketplace__TransferFailed();
         }
 
-        (success,) = seller.call{value: msg.value}("");
+        (success, ) = seller.call{value: msg.value}("");
         if (!success) {
             revert NFTMarketplace__TransferFailed();
         }
     }
 
+    ///////////////////
+    // Private Functions
+    ///////////////////
+    /**
+     * Creates a Market item for the newly minted NFT
+     * @param tokenId The token id
+     * @param price The token price
+     */
+    function createMarketItem(
+        uint256 tokenId,
+        uint256 price
+    ) private moreThanZero(price) mustBeEqualToListingPrice(price) {
+        s_idToMarketItem[tokenId] = MarketItem(
+            tokenId,
+            payable(msg.sender),
+            payable(address(this)),
+            price,
+            false
+        );
+
+        emit MarketItemCreated(
+            tokenId,
+            msg.sender,
+            address(this),
+            price,
+            false
+        );
+
+        _transfer(msg.sender, address(this), tokenId);
+    }
+
+    ///////////////////
+    // Public View Functions
+    ///////////////////
     /**
      * Returns all unsold market items
-     *  
+     *
      */
     function fetchMarketItems() public view returns (MarketItem[] memory) {
         uint itemCount = s_tokenIds;
@@ -322,5 +322,13 @@ contract NFTMarketplace is ERC721URIStorage, Ownable {
             }
         }
         return items;
+    }
+
+    /**
+     * @notice Gets the listing price
+     * @return The current listing price
+     */
+    function getListingPrice() public view returns (uint256) {
+        return listingPrice;
     }
 }
