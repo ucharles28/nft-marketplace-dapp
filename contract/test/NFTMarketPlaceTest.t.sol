@@ -2,19 +2,19 @@
 pragma solidity ^0.8.24;
 
 import {Test, console} from "forge-std/Test.sol";
-import {DeployNtfMarketPlace} from "../script/DeployNftMarketPlace.s.sol";
+import {DeployNftMarketPlace} from "../script/DeployNftMarketPlace.s.sol";
 import {NFTMarketplace} from "../src/NFTMarketplace.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 contract NFTMarketPlaceTest is Test {
-    DeployNtfMarketPlace deployer;
+    DeployNftMarketPlace deployer;
     NFTMarketplace nftMarketPlace;
     address SELLER = makeAddr("seller");
     uint256 constant STARTING_BALANCE = 10 ether;
-    uint256 constant LISTING_PRICE = 0.025 ether;
+    uint256 constant LISTING_PRICE = 0.0001 ether;
 
     function setUp() public {
-        deployer = new DeployNtfMarketPlace();
+        deployer = new DeployNftMarketPlace();
         nftMarketPlace = deployer.run();
         vm.deal(SELLER, STARTING_BALANCE);
     }
@@ -68,6 +68,11 @@ contract NFTMarketPlaceTest is Test {
         vm.prank(SELLER);
         vm.expectRevert(NFTMarketplace.NFTMarketplace__TokeURIEmpty.selector);
         nftMarketPlace.createToken{value: LISTING_PRICE}("", 1 ether);
+    }
+
+    function testEmptyMarketPlaceItems() public {
+        NFTMarketplace.MarketItem[] memory marketItems = nftMarketPlace.fetchMarketItems();
+        assertEq(marketItems.length, 0);
     }
 
     function testCreateTokenSuccessfully() public {

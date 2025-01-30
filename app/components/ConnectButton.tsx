@@ -6,8 +6,9 @@ import {
   useAccountModal,
   useChainModal,
 } from "@rainbow-me/rainbowkit";
-import { useAccount, useDisconnect } from "wagmi";
+import { useAccount, useDisconnect, useWriteContract } from "wagmi";
 import { emojiAvatarForAddress } from "@/lib/emojiAvatarForAddress";
+import { middleEllipsis } from "@/lib/utils";
 
 export const ConnectBtn = () => {
   const { isConnecting, address, isConnected, chain } = useAccount();
@@ -40,14 +41,14 @@ export const ConnectBtn = () => {
 
   if (isConnected && !chain) {
     return (
-      <button className="btn" onClick={openChainModal}>
+      <button className="btn text-white" onClick={openChainModal}>
         Wrong network
       </button>
     );
   }
 
   return (
-    <div className="max-w-5xl w-full flex items-center justify-between">
+    <div className="flex gap-4 items-center justify-between">
       <div
         className="flex justify-center items-center px-4 py-2 border border-neutral-700 bg-neutral-800/30 rounded-xl font-mono font-bold gap-x-2 cursor-pointer"
         onClick={async () => openAccountModal?.()}
@@ -63,7 +64,7 @@ export const ConnectBtn = () => {
         >
           {emoji}
         </div>
-        <p>Account</p>
+        <p>{middleEllipsis(address as string, 4) || ""}</p>
       </div>
       <button className="btn" onClick={openChainModal}>
         Switch Networks

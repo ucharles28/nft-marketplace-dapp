@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Providers from "./providers";
 import { headers } from "next/headers";
+import BaseComponent from './components/BaseComponent';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,7 +27,9 @@ export default async function RootLayout({
         className={`${inter.className} antialiased`}
       >
         <Providers cookie={cookie}>
-          {children}
+          <BaseComponent>
+            {children}
+          </BaseComponent>
         </Providers>
       </body>
     </html>
