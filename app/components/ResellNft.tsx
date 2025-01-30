@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react'
 import { parseEther } from 'viem'
 import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi'
 
-const ResellNft = ({ id, imageUri }: { id: string, imageUri: string }) => {
+const ResellNft = ({ id }: { id: string }) => {
     const router = useRouter()
     const { data: hash, error, isPending, writeContract } = useWriteContract()
     const { isSuccess } = useWaitForTransactionReceipt({
@@ -28,10 +28,17 @@ const ResellNft = ({ id, imageUri }: { id: string, imageUri: string }) => {
     }, [isSuccess])
 
     async function fetchNFT() {
-        if (!imageUri) return
-        // const response = await fetch(imageUri)
-        // const meta = await response.json()
-        updateFormInput(state => ({ ...state, image: imageUri }))
+        const tokenUri = await readContract(config, {
+            address: contractAddress,
+            abi,
+            functionName: 'tokenURI',
+            args: [BigInt(id)],
+        })
+        
+        
+        const response = await fetch(tokenUri)
+        const meta = await response.json()
+        updateFormInput(state => ({ ...state, image: meta.image }))
     }
 
     async function listNFTForSale() {
@@ -43,6 +50,7 @@ const ResellNft = ({ id, imageUri }: { id: string, imageUri: string }) => {
             abi,
             functionName: 'getListingPrice',
         })
+        console.log('Listing price ', listingPrice)
 
         await writeContract({
             abi,
@@ -56,7 +64,7 @@ const ResellNft = ({ id, imageUri }: { id: string, imageUri: string }) => {
             // chainId: 11155111
         })
 
-        
+
     }
 
     return (

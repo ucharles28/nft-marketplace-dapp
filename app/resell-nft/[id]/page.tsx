@@ -4,12 +4,12 @@ import React from 'react'
 export default async function ResellNftPage({
     params
 }: {
-    params: Promise<{ slug: string[] }>
+    params: Promise<{ id: string }>
 }) {
 
-    const { slug } = await params;
+    const { id } = await params;
 
     return (
-        <ResellNft id={slug[0]} imageUri={slug[1]} />
+        <ResellNft id={id} />
     )
 }

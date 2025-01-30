@@ -1,20 +1,18 @@
 'use client'
+import { abi, contractAddress } from '@/lib/contract';
+import { NftItem } from '@/lib/models';
+import { config } from '@/lib/wagmi';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
+import { readContract } from '@wagmi/core';
 import React, { useEffect, useState } from 'react'
-import { readContract } from '@wagmi/core'
-import { config } from '@/lib/wagmi'
-import { abi, contractAddress } from '@/lib/contract'
-import { NftItem } from '@/lib/models'
-import { formatEther } from 'viem'
-import { useRouter } from 'next/navigation'
-import { useConnectModal } from '@rainbow-me/rainbowkit'
-import { useAccount } from 'wagmi'
+import { formatEther } from 'viem';
+import { useAccount } from 'wagmi';
 
-const MyNfts = () => {
+const Dashboard = () => {
     const { openConnectModal } = useConnectModal();
     const { address } = useAccount();
-    const router = useRouter()
+
     const [nftItems, setNftItems] = useState<NftItem[]>([])
-    
     useEffect(() => {
         if (!address && openConnectModal) {
             openConnectModal()
@@ -22,11 +20,11 @@ const MyNfts = () => {
         fetchMyNfts();
     }, [address])
 
-    async function fetchMyNfts() {   
+    async function fetchMyNfts() {
         const result = await readContract(config, {
             abi,
             address: contractAddress,
-            functionName: 'fetchMyNFTs',
+            functionName: 'fetchItemsListed',
             account: address
         })
 
@@ -61,14 +59,10 @@ const MyNfts = () => {
 
         setNftItems(items);
     }
-
-    function listNFT(nft: NftItem) {
-        router.push(`/resell-nft/${nft.tokenId}`)
-    }
-
     return (
-        <div className="flex justify-center">
+        <div>
             <div className="p-4">
+                <h2 className="text-2xl py-2">Items Listed</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
                     {
                         nftItems.map((nftItem, i) => (
@@ -76,7 +70,6 @@ const MyNfts = () => {
                                 <img src={nftItem.image} className="rounded" />
                                 <div className="p-4 bg-black">
                                     <p className="text-2xl font-bold text-white">Price - {nftItem.price} Eth</p>
-                                    <button className="mt-4 w-full bg-pink-500 text-white font-bold py-2 px-12 rounded" onClick={() => listNFT(nftItem)}>List</button>
                                 </div>
                             </div>
                         ))
@@ -87,4 +80,4 @@ const MyNfts = () => {
     )
 }
 
-export default MyNfts
+export default Dashboard
