@@ -7,8 +7,8 @@ import {
   useChainModal,
 } from "@rainbow-me/rainbowkit";
 import { useAccount, useDisconnect, useWriteContract } from "wagmi";
-import { emojiAvatarForAddress } from "@/lib/emojiAvatarForAddress";
-import { middleEllipsis } from "@/lib/utils";
+import { emojiAvatarForAddress } from "@/app/lib/emojiAvatarForAddress";
+import { middleEllipsis } from "@/app/lib/utils";
 
 export const ConnectBtn = () => {
   const { isConnecting, address, isConnected, chain } = useAccount();
@@ -34,7 +34,7 @@ export const ConnectBtn = () => {
         onClick={openConnectModal}
         disabled={isConnecting}
       >
-        { isConnecting ? 'Connecting...' : 'Connect your wallet' }
+        {isConnecting ? 'Connecting...' : 'Connect your wallet'}
       </button>
     );
   }

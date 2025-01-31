@@ -1,11 +1,11 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import { useReadContract, useWaitForTransactionReceipt, useWriteContract } from 'wagmi'
-import { contractAddress, abi } from '../../lib/contract'
+import { contractAddress, abi } from '../lib/contract'
 import { formatEther, parseEther } from "viem";
 import { readContract } from '@wagmi/core'
-import { config } from '@/lib/wagmi';
-import { NftItem } from '@/lib/models';
+import { config } from '@/app/lib/wagmi';
+import { NftItem } from '@/app/lib/models';
 import PageLoader from './PageLoader';
 
 

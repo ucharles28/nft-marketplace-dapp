@@ -1,6 +1,6 @@
 'use client'
-import { abi, contractAddress } from '@/lib/contract'
-import { config } from '@/lib/wagmi'
+import { abi, contractAddress } from '@/app/lib/contract'
+import { config } from '@/app/lib/wagmi'
 import { readContract } from '@wagmi/core'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
@@ -34,8 +34,8 @@ const ResellNft = ({ id }: { id: string }) => {
             functionName: 'tokenURI',
             args: [BigInt(id)],
         })
-        
-        
+
+
         const response = await fetch(tokenUri)
         const meta = await response.json()
         updateFormInput(state => ({ ...state, image: meta.image }))

@@ -1,7 +1,7 @@
 "use client";
 
 import { useAccount, useBalance, useEnsName } from "wagmi";
-import { middleEllipsis } from "@/lib/utils";
+import { middleEllipsis } from "@/app/lib/utils";
 import { formatUnits } from "viem";
 
 export default function Profile() {

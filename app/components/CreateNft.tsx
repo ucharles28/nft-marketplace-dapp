@@ -1,11 +1,11 @@
 'use client'
 import React, { ChangeEvent, useEffect, useState } from 'react'
-import { pinata } from "../../lib/utils"
+import { pinata } from "../lib/utils"
 import { useWriteContract, useWaitForTransactionReceipt, BaseError, useAccount } from 'wagmi'
 import {
     useConnectModal,
 } from "@rainbow-me/rainbowkit";
-import { contractAddress, abi } from '@/lib/contract'
+import { contractAddress, abi } from '@/app/lib/contract'
 import { parseEther } from 'viem'
 import ButtonLoader from './ButtonLoader';
 

@@ -1,7 +1,7 @@
 'use client'
-import { abi, contractAddress } from '@/lib/contract';
-import { NftItem } from '@/lib/models';
-import { config } from '@/lib/wagmi';
+import { abi, contractAddress } from '@/app/lib/contract';
+import { NftItem } from '@/app/lib/models';
+import { config } from '@/app/lib/wagmi';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { readContract } from '@wagmi/core';
 import React, { useEffect, useState } from 'react'
