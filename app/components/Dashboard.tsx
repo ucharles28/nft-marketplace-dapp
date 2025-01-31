@@ -30,7 +30,7 @@ const Dashboard = () => {
             account: address
         })
 
-        loadNfts(result)
+        loadNfts(result as any[])
     }
 
     async function loadNfts(nftItems: any[]) {

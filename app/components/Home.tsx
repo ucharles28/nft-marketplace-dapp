@@ -31,12 +31,12 @@ const Home = () => {
             functionName: 'fetchMarketItems',
         })
 
-        loadNfts(result)
+        loadNfts(result as any[])
     }
 
     useEffect(() => {
         if (data) {
-            loadNfts(data)
+            loadNfts(data as any[])
         }
     }, [data])
 
