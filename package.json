@@ -21,6 +21,7 @@
     "pinata-web3": "^0.5.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-loader-spinner": "^6.1.6",
     "viem": "^2.22.3",
     "wagmi": "^2.14.6"
   },

@@ -1,5 +1,5 @@
 'use client'
-import React, { ChangeEvent, useState } from 'react'
+import React, { ChangeEvent, useEffect, useState } from 'react'
 import { pinata } from "../../lib/utils"
 import { useWriteContract, useWaitForTransactionReceipt, BaseError, useAccount } from 'wagmi'
 import {
@@ -7,26 +7,44 @@ import {
 } from "@rainbow-me/rainbowkit";
 import { contractAddress, abi } from '@/lib/contract'
 import { parseEther } from 'viem'
-
-import { http, createConfig, simulateContract, getAccount, connect } from '@wagmi/core'
-import { foundry, sepolia, mainnet } from '@wagmi/core/chains'
-import { injected } from "wagmi/connectors";
+import ButtonLoader from './ButtonLoader';
+import { notification } from 'antd';
 
 
 const CreateNft = () => {
+    const [api, contextHolder] = notification.useNotification();
     const { openConnectModal } = useConnectModal();
     const { address } = useAccount();
     const [fileBase64, setFileBase64] = useState<string>('')
+    const [isLoading, setIsLoading] = useState<boolean>(false)
     const [imageFile, setImageFile] = useState<File | null>()
-    const [formInput, updateFormInput] = useState({ price: '', name: '', description: '' })
+    const [formInput, updateFormInput] = useState({ price: '0', name: '', description: '' })
 
     const { data: hash, error, isPending, writeContract } = useWriteContract()
     const { isSuccess } = useWaitForTransactionReceipt({
         hash,
     })
 
+    useEffect(() => {
+        if (isSuccess) {
+            setIsLoading(false)
+            // success notif
+            alert("Transaction successfully")
+            return
+        }
+    }, [isSuccess])
+
+    useEffect(() => {
+        if (error) {
+            setIsLoading(false)
+            // success notif
+            // alert("Transaction successfully")
+            return
+        }
+    }, [error])
+
     async function onChange(e: ChangeEvent<HTMLInputElement>) {
-        
+
         if (!e.target.files) {
             return;
         }
@@ -38,9 +56,9 @@ const CreateNft = () => {
         if (!address && openConnectModal) {
             openConnectModal()
         }
-
+        setIsLoading(true)
         const url = await uploadToIPFS()
-        
+
         if (!url) return;
 
         await writeContract({
@@ -52,7 +70,6 @@ const CreateNft = () => {
                 parseEther(formInput.price),
             ],
             value: parseEther('0.0001'),
-            // chainId: 11155111
         })
 
     }
@@ -68,7 +85,7 @@ const CreateNft = () => {
             description: formInput.description,
             image: imageUrl
         })
-        
+
 
         const ipfsUrl = await pinata.gateways.convert(jsonUpload.IpfsHash)
         return ipfsUrl;
@@ -102,6 +119,7 @@ const CreateNft = () => {
                 <input
                     placeholder="Asset Price in Eth"
                     className="mt-2 border rounded p-4"
+                    type='number'
                     onChange={e => updateFormInput({ ...formInput, price: e.target.value })}
                 />
                 <input
@@ -115,15 +133,15 @@ const CreateNft = () => {
                         <img className="rounded mt-4" width="350" src={fileBase64} />
                     )
                 }
-                <button disabled={!formInput.description || !formInput.name || !formInput.price || !fileBase64} onClick={listNFTForSale} className="font-bold mt-4 bg-pink-500 text-white rounded p-4 shadow-lg">
-                    {isPending ? 'Confirming...' : 'Mint'}
+                <button disabled={!formInput.description || !formInput.name || !formInput.price || !fileBase64} onClick={listNFTForSale} className="font-bold mt-4 bg-pink-500 text-white rounded p-4 shadow-lg text-center flex justify-center">
+                    {isLoading ? <ButtonLoader /> : 'Mint'}
                 </button>
-                {hash && <div className='text-white'>Transaction Hash: {hash}</div>}
+                {/* {hash && <div className='text-white'>Transaction Hash: {hash}</div>} */}
                 {/* {isConfirming && <div className='text-white'>Waiting for confirmation...</div>} */}
-                {isSuccess && <div className='text-white'>Transaction confirmed.</div>}
-                {error && (
-                    <div className='text-white'>Error: {error.message}</div>
-                )}
+                {/* {isSuccess && <div className='text-white'>Transaction confirmed.</div>} */}
+                {/* {error && (
+                    <div className='text-white'>Error: {error.name}</div>
+                )} */}
             </div>
         </div>
     )

@@ -9,7 +9,7 @@ export default function BaseComponent({
     return (
         <div>
             <nav className="border-b p-6">
-                <div className="flex w-full justify-between">
+                <div className="flex flex-col md:flex-row gap-4 md:gap-0 w-full justify-between">
                     <div>
                         <p className="text-4xl font-bold">Metaverse Marketplace</p>
                         <div className="flex mt-4">

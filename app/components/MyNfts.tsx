@@ -8,13 +8,15 @@ import { formatEther } from 'viem'
 import { useRouter } from 'next/navigation'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { useAccount } from 'wagmi'
+import PageLoader from './PageLoader'
 
 const MyNfts = () => {
     const { openConnectModal } = useConnectModal();
     const { address } = useAccount();
     const router = useRouter()
     const [nftItems, setNftItems] = useState<NftItem[]>([])
-    
+    const [isLoading, setIsLoading] = useState(true)
+
     useEffect(() => {
         if (!address && openConnectModal) {
             openConnectModal()
@@ -22,7 +24,7 @@ const MyNfts = () => {
         fetchMyNfts();
     }, [address])
 
-    async function fetchMyNfts() {   
+    async function fetchMyNfts() {
         const result = await readContract(config, {
             abi,
             address: contractAddress,
@@ -60,11 +62,14 @@ const MyNfts = () => {
         }))
 
         setNftItems(items);
+        setIsLoading(false)
     }
 
     function listNFT(nft: NftItem) {
         router.push(`/resell-nft/${nft.tokenId}`)
     }
+
+    if (isLoading) return (<PageLoader />)
 
     return (
         <div className="flex justify-center">

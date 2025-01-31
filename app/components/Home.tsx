@@ -6,6 +6,7 @@ import { formatEther, parseEther } from "viem";
 import { readContract } from '@wagmi/core'
 import { config } from '@/lib/wagmi';
 import { NftItem } from '@/lib/models';
+import PageLoader from './PageLoader';
 
 
 const Home = () => {
@@ -15,6 +16,7 @@ const Home = () => {
     })
 
     const [nftItems, setNftItems] = useState<NftItem[]>([])
+    const [isLoading, setIsLoading] = useState(true)
     const { data, isPending } = useReadContract({
         abi,
         address: contractAddress,
@@ -33,15 +35,12 @@ const Home = () => {
     }
 
     useEffect(() => {
-        console.log('Loading data')
         if (data) {
             loadNfts(data)
         }
     }, [data])
 
-
     useEffect(() => {
-
         if (isSuccess) {
             alert('Confirmed!');
             load();
@@ -75,6 +74,7 @@ const Home = () => {
         }))
 
         setNftItems(items);
+        setIsLoading(false)
     }
 
     async function buyNft(nftItem: NftItem) {
@@ -90,9 +90,9 @@ const Home = () => {
         })
     }
 
-    if (isPending) return <div>Loading...</div>
+    if (isLoading) return (<PageLoader />)
 
-    if (nftItems.length < 1) return (<h1 className="py-10 px-20 text-3xl">No NFTs owned</h1>)
+    if (nftItems.length < 1 && !isLoading) return (<h1 className="py-10 px-20 text-3xl">No NFTs listed</h1>)
 
     return (
         <div className="flex justify-center">

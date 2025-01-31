@@ -7,12 +7,14 @@ import { readContract } from '@wagmi/core';
 import React, { useEffect, useState } from 'react'
 import { formatEther } from 'viem';
 import { useAccount } from 'wagmi';
+import PageLoader from './PageLoader';
 
 const Dashboard = () => {
     const { openConnectModal } = useConnectModal();
     const { address } = useAccount();
 
     const [nftItems, setNftItems] = useState<NftItem[]>([])
+    const [isLoading, setIsLoading] = useState(true)
     useEffect(() => {
         if (!address && openConnectModal) {
             openConnectModal()
@@ -58,7 +60,11 @@ const Dashboard = () => {
         }))
 
         setNftItems(items);
+        setIsLoading(false)
     }
+
+    if (isLoading) return (<PageLoader />)
+
     return (
         <div>
             <div className="p-4">
