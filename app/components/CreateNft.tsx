@@ -8,11 +8,9 @@ import {
 import { contractAddress, abi } from '@/lib/contract'
 import { parseEther } from 'viem'
 import ButtonLoader from './ButtonLoader';
-import { notification } from 'antd';
 
 
 const CreateNft = () => {
-    const [api, contextHolder] = notification.useNotification();
     const { openConnectModal } = useConnectModal();
     const { address } = useAccount();
     const [fileBase64, setFileBase64] = useState<string>('')
