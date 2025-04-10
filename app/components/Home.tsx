@@ -4,7 +4,7 @@ import { useReadContract, useWaitForTransactionReceipt, useWriteContract } from 
 import { contractAddress, abi } from '../lib/contract'
 import { formatEther, parseEther } from "viem";
 import { readContract } from '@wagmi/core'
-import { config } from '@/app/lib/wagmi';
+    import { config } from '@/app/lib/wagmi';
 import { NftItem } from '@/app/lib/models';
 import PageLoader from './PageLoader';
 
